@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payli — Client Payments on Mobile</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-gradient"></div>
+    <div class="bg-spotlight"></div>
+
+    <div class="app-shell" role="application">
+      <header class="app-header glass">
+        <div>
+          <p class="subtitle">Hello, Morgan</p>
+          <h1 class="headline">Let’s collect your next client payment</h1>
+        </div>
+        <button class="icon-button" aria-label="Notifications">
+          <span aria-hidden="true">🔔</span>
+        </button>
+      </header>
+
+      <main class="screen" aria-live="polite">
+        <section class="screen-view active" data-screen="home" id="screen-home" aria-label="Home overview">
+          <section class="balance-card glass">
+            <div class="card-top">
+              <p class="label">Total received this month</p>
+              <span class="status-pill">+14%</span>
+            </div>
+            <p class="amount">$18,920.00</p>
+            <div class="card-footer">
+              <div>
+                <p class="label">Pending payouts</p>
+                <p class="value">$2,130.00</p>
+              </div>
+              <div>
+                <p class="label">Avg. settlement</p>
+                <p class="value">1.8 days</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="quick-actions glass" aria-label="Quick actions">
+            <button class="action" id="newPayment">
+              <div class="icon">➕</div>
+              <div>
+                <p>Create charge</p>
+                <span>Send a new payment link</span>
+              </div>
+            </button>
+            <button class="action">
+              <div class="icon">📄</div>
+              <div>
+                <p>Invoices</p>
+                <span>View open balances</span>
+              </div>
+            </button>
+            <button class="action">
+              <div class="icon">👥</div>
+              <div>
+                <p>Clients</p>
+                <span>Manage contacts</span>
+              </div>
+            </button>
+          </section>
+
+          <section class="activity glass" aria-label="Recent activity">
+            <header>
+              <h2>Recent payments</h2>
+              <button class="text-button">See all</button>
+            </header>
+            <ul>
+              <li>
+                <div>
+                  <p class="client">Felix Architects</p>
+                  <span class="timestamp">Today · Card •••• 4242</span>
+                </div>
+                <span class="value">$3,200.00</span>
+              </li>
+              <li>
+                <div>
+                  <p class="client">Aster Studio</p>
+                  <span class="timestamp">Yesterday · Bank transfer</span>
+                </div>
+                <span class="value">$1,840.00</span>
+              </li>
+              <li>
+                <div>
+                  <p class="client">Brightside Legal</p>
+                  <span class="timestamp">Mon · Card •••• 3005</span>
+                </div>
+                <span class="value">$5,600.00</span>
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <section
+          class="screen-view"
+          data-screen="cards"
+          id="screen-cards"
+          aria-label="Stored payment cards"
+          hidden
+          aria-hidden="true"
+        >
+          <div class="card-wallet glass">
+            <header>
+              <h2>Virtual wallet</h2>
+              <span class="badge">4 cards</span>
+            </header>
+            <div class="wallet-grid">
+              <article class="wallet-card primary">
+                <div class="wallet-top">
+                  <span>Payli Corporate</span>
+                  <span class="chip">VISA</span>
+                </div>
+                <p class="wallet-number">•••• 4242</p>
+                <div class="wallet-footer">
+                  <span>Exp 05/28</span>
+                  <span>Limit $15,000</span>
+                </div>
+              </article>
+              <article class="wallet-card">
+                <div class="wallet-top">
+                  <span>Projects</span>
+                  <span class="chip">MC</span>
+                </div>
+                <p class="wallet-number">•••• 3010</p>
+                <div class="wallet-footer">
+                  <span>Exp 11/26</span>
+                  <span>Limit $8,500</span>
+                </div>
+              </article>
+              <article class="wallet-card">
+                <div class="wallet-top">
+                  <span>Operations</span>
+                  <span class="chip">AMEX</span>
+                </div>
+                <p class="wallet-number">•••• 9020</p>
+                <div class="wallet-footer">
+                  <span>Exp 02/27</span>
+                  <span>Limit $12,000</span>
+                </div>
+              </article>
+            </div>
+            <button class="text-button">Manage cards</button>
+          </div>
+        </section>
+
+        <section
+          class="screen-view"
+          data-screen="reports"
+          id="screen-reports"
+          aria-label="Performance reports"
+          hidden
+          aria-hidden="true"
+        >
+          <div class="reports glass">
+            <header>
+              <h2>Performance</h2>
+              <span class="badge accent">Q2</span>
+            </header>
+            <ul class="report-metrics">
+              <li>
+                <span class="metric-label">Total volume</span>
+                <span class="metric-value">$54,130</span>
+                <span class="metric-trend up">▲ 18% vs last month</span>
+              </li>
+              <li>
+                <span class="metric-label">Average ticket</span>
+                <span class="metric-value">$740</span>
+                <span class="metric-trend flat">■ Stable</span>
+              </li>
+              <li>
+                <span class="metric-label">Failed payments</span>
+                <span class="metric-value">1.4%</span>
+                <span class="metric-trend down">▼ 0.6% improvement</span>
+              </li>
+            </ul>
+            <div class="chart-placeholder" role="img" aria-label="Bar chart mock showing weekly volume"></div>
+          </div>
+        </section>
+
+        <section
+          class="screen-view"
+          data-screen="settings"
+          id="screen-settings"
+          aria-label="Settings"
+          hidden
+          aria-hidden="true"
+        >
+          <form class="settings glass" id="settingsForm">
+            <header>
+              <h2>Preferences</h2>
+              <p>Adjust how clients experience your payment links.</p>
+            </header>
+            <label class="toggle">
+              <input type="checkbox" name="reminders" checked />
+              <span class="toggle-label">
+                <span>Send automatic reminders</span>
+                <small>Notify clients 3 days before due date</small>
+              </span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" name="tips" />
+              <span class="toggle-label">
+                <span>Allow optional tips</span>
+                <small>Let clients add a gratuity to payments</small>
+              </span>
+            </label>
+            <label class="toggle">
+              <input type="checkbox" name="twoFactor" checked />
+              <span class="toggle-label">
+                <span>Require 2-step verification</span>
+                <small>Protect dashboard access with SMS codes</small>
+              </span>
+            </label>
+            <button type="submit" class="primary-button ghost">Save preferences</button>
+            <p class="settings-feedback" id="settingsFeedback" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </main>
+
+      <footer class="app-footer glass">
+        <nav aria-label="Primary">
+          <button type="button" class="nav-link active" data-target="home" aria-controls="screen-home" aria-current="page">
+            <span aria-hidden="true">🏠</span>
+            <span>Home</span>
+          </button>
+          <button type="button" class="nav-link" data-target="cards" aria-controls="screen-cards">
+            <span aria-hidden="true">💳</span>
+            <span>Cards</span>
+          </button>
+          <button type="button" class="nav-link" data-target="reports" aria-controls="screen-reports">
+            <span aria-hidden="true">📊</span>
+            <span>Reports</span>
+          </button>
+          <button type="button" class="nav-link" data-target="settings" aria-controls="screen-settings">
+            <span aria-hidden="true">⚙️</span>
+            <span>Settings</span>
+          </button>
+        </nav>
+        <p class="copyright">© <span id="year"></span> Payli</p>
+      </footer>
+    </div>
+
+    <section class="payment-sheet" id="paymentSheet" aria-hidden="true">
+      <div
+        class="sheet-content glass"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sheetTitle"
+        aria-describedby="paymentFeedback"
+      >
+        <div class="sheet-header">
+          <div>
+            <p class="subtitle">New payment</p>
+            <h2 id="sheetTitle">Charge a client</h2>
+          </div>
+          <button class="icon-button" id="closeSheet" aria-label="Close payment form">✕</button>
+        </div>
+
+        <form id="paymentForm" class="sheet-form" novalidate>
+          <label>
+            <span>Client full name</span>
+            <input type="text" name="fullName" placeholder="Jane Doe" required autocomplete="name" />
+          </label>
+          <label>
+            <span>Client email</span>
+            <input type="email" name="email" placeholder="jane@company.com" required autocomplete="email" />
+          </label>
+          <label>
+            <span>Payment amount</span>
+            <div class="input-with-prefix">
+              <span class="prefix">$</span>
+              <input
+                type="number"
+                min="1"
+                step="0.01"
+                inputmode="decimal"
+                name="amount"
+                placeholder="1,200.00"
+                required
+              />
+            </div>
+          </label>
+          <label>
+            <span>Card number</span>
+            <input
+              type="text"
+              name="cardNumber"
+              inputmode="numeric"
+              pattern="\\d{13,19}"
+              maxlength="19"
+              placeholder="4242 4242 4242 4242"
+              required
+              autocomplete="cc-number"
+            />
+          </label>
+          <div class="row">
+            <label>
+              <span>Expiry (MM/YY)</span>
+              <input
+                type="text"
+                name="expiry"
+                placeholder="05/28"
+                pattern="(0[1-9]|1[0-2])\\/\\d{2}"
+                required
+                autocomplete="cc-exp"
+              />
+            </label>
+            <label>
+              <span>CVV</span>
+              <input
+                type="password"
+                name="cvv"
+                inputmode="numeric"
+                pattern="\\d{3,4}"
+                maxlength="4"
+                placeholder="123"
+                required
+                autocomplete="cc-csc"
+              />
+            </label>
+          </div>
+          <button type="submit" class="primary-button">Process payment</button>
+        </form>
+
+        <div class="feedback" id="paymentFeedback" role="alert" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
