@@ -1,0 +1,19 @@
+{
+  "name": "payli",
+  "version": "1.0.0",
+  "description": "Glassmorphism-inspired payment portal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "cross-env NODE_ENV=development node server.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "helmet": "^7.0.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
