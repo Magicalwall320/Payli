@@ -1,4 +1,7 @@
-const newPaymentButton = document.getElementById('newPayment');
+const flowButtons = document.querySelectorAll('[data-flow]');
+const themeToggleButton = document.getElementById('themeToggle');
+const themeIcon = themeToggleButton?.querySelector('.theme-icon');
+const themeText = themeToggleButton?.querySelector('.theme-text');
 const closeSheetButton = document.getElementById('closeSheet');
 const paymentSheet = document.getElementById('paymentSheet');
 const paymentForm = document.getElementById('paymentForm');
@@ -8,6 +11,9 @@ const navButtons = document.querySelectorAll('.nav-link[data-target]');
 const screenViews = document.querySelectorAll('.screen-view');
 const settingsForm = document.getElementById('settingsForm');
 const settingsFeedback = document.getElementById('settingsFeedback');
+const transferHistoryButton = document.getElementById('transferHistory');
+const flowInputs = paymentForm ? paymentForm.querySelectorAll('input[name="flow"]') : [];
+const themePreferenceKey = 'payli-theme';
 let lastFocusedTrigger = null;
 
 if (year) {
@@ -49,7 +55,7 @@ const toggleSheet = (open) => {
   paymentSheet.setAttribute('aria-hidden', String(!open));
   document.body.style.overflow = open ? 'hidden' : '';
   if (open && paymentForm) {
-    const firstField = paymentForm.querySelector('input, button, select, textarea');
+    const firstField = paymentForm.querySelector('input:not([type="radio"]), textarea, select');
     window.setTimeout(() => {
       if (firstField instanceof HTMLElement) {
         firstField.focus();
@@ -62,7 +68,63 @@ const toggleSheet = (open) => {
   }
 };
 
-newPaymentButton?.addEventListener('click', () => toggleSheet(true));
+const setFlowValue = (flow) => {
+  if (!flowInputs.length) return;
+  const normalized = flow === 'send' ? 'send' : 'receive';
+  flowInputs.forEach((input) => {
+    if (input instanceof HTMLInputElement) {
+      input.checked = input.value === normalized;
+    }
+  });
+};
+
+const applyTheme = (theme) => {
+  const normalized = theme === 'creme' ? 'creme' : 'brown';
+  document.body.setAttribute('data-theme', normalized);
+  themeToggleButton?.setAttribute('aria-pressed', String(normalized === 'creme'));
+  themeToggleButton?.setAttribute('aria-label', `Switch to ${normalized === 'creme' ? 'brown' : 'creme'} theme`);
+  if (themeText) {
+    themeText.textContent = normalized === 'creme' ? 'Brown theme' : 'Creme theme';
+  }
+  if (themeIcon) {
+    themeIcon.textContent = normalized === 'creme' ? '🌅' : '🌙';
+  }
+};
+
+(() => {
+  if (typeof localStorage === 'undefined') {
+    applyTheme(document.body.getAttribute('data-theme'));
+    return;
+  }
+  try {
+    const stored = localStorage.getItem(themePreferenceKey);
+    applyTheme(stored === 'creme' ? 'creme' : 'brown');
+  } catch (error) {
+    applyTheme(document.body.getAttribute('data-theme'));
+  }
+})();
+
+themeToggleButton?.addEventListener('click', () => {
+  const current = document.body.getAttribute('data-theme') === 'creme' ? 'creme' : 'brown';
+  const next = current === 'creme' ? 'brown' : 'creme';
+  applyTheme(next);
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.setItem(themePreferenceKey, next);
+    } catch (error) {
+      // ignore persistence failures
+    }
+  }
+});
+
+flowButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const flow = button.dataset.flow;
+    setFlowValue(flow);
+    toggleSheet(true);
+  });
+});
+
 closeSheetButton?.addEventListener('click', () => toggleSheet(false));
 
 document.addEventListener('keydown', (event) => {
@@ -85,20 +147,13 @@ navButtons.forEach((button) => {
   });
 });
 
+transferHistoryButton?.addEventListener('click', () => setActiveScreen('reports'));
+
 const setFeedback = (type, message) => {
   if (!feedback) return;
   feedback.className = `feedback ${type}`.trim();
   feedback.textContent = message;
 };
-
-const formatCardNumber = (value) => value.replace(/\s+/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
-
-paymentForm?.cardNumber?.addEventListener('input', (event) => {
-  const input = event.target;
-  if (!(input instanceof HTMLInputElement)) return;
-  const digits = input.value.replace(/\D/g, '');
-  input.value = formatCardNumber(digits);
-});
 
 paymentForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -108,7 +163,10 @@ paymentForm?.addEventListener('submit', async (event) => {
   const payload = Object.fromEntries(formData.entries());
 
   payload.amount = Number(payload.amount);
-  payload.cardNumber = payload.cardNumber.replace(/\s+/g, '');
+  payload.fullName = (payload.fullName || '').toString().trim();
+  payload.email = (payload.email || '').toString().trim();
+  payload.memo = (payload.memo || '').toString().trim();
+  payload.flow = payload.flow === 'send' ? 'send' : 'receive';
 
   try {
     const response = await fetch('/api/pay', {
@@ -125,7 +183,8 @@ paymentForm?.addEventListener('submit', async (event) => {
 
     setFeedback('success', `${result.message}. Reference: ${result.reference}`);
     paymentForm.reset();
-    const firstField = paymentForm.querySelector('input, button, select, textarea');
+    setFlowValue('receive');
+    const firstField = paymentForm.querySelector('input:not([type="radio"]), textarea, select');
     if (firstField instanceof HTMLElement) {
       firstField.focus();
     }
@@ -138,7 +197,7 @@ paymentForm?.addEventListener('submit', async (event) => {
 settingsForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   if (!settingsFeedback) return;
-  settingsFeedback.textContent = 'Preferences saved. Your payment links will use the updated rules.';
+  settingsFeedback.textContent = 'Preferences saved. Money movement links will use the updated rules.';
   setTimeout(() => {
     if (settingsFeedback) {
       settingsFeedback.textContent = '';

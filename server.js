@@ -11,45 +11,47 @@ app.use(helmet({
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const validatePaymentPayload = (payload) => {
+const validatePaymentPayload = (payload = {}) => {
   const errors = [];
-  if (!payload.fullName || payload.fullName.trim().length < 3) {
-    errors.push('Please provide the card holder\'s full name.');
+  const flow = typeof payload.flow === 'string' ? payload.flow.toLowerCase() : '';
+  if (!['send', 'receive'].includes(flow)) {
+    errors.push('Please select whether this is a send or receive movement.');
   }
-  if (!payload.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+  const fullName = typeof payload.fullName === 'string' ? payload.fullName.trim() : '';
+  if (fullName.length < 3) {
+    errors.push('Please provide the counterparty\'s full name.');
+  }
+  const email = typeof payload.email === 'string' ? payload.email.trim() : '';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.push('Please provide a valid email address.');
   }
   const amount = Number(payload.amount);
   if (Number.isNaN(amount) || amount <= 0) {
-    errors.push('Payment amount must be greater than zero.');
+    errors.push('Transfer amount must be greater than zero.');
   }
-  if (!payload.cardNumber || !/^\d{13,19}$/.test(payload.cardNumber)) {
-    errors.push('Card number must contain 13 to 19 digits.');
-  }
-  if (!payload.expiry || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(payload.expiry)) {
-    errors.push('Expiry date must be in MM/YY format.');
-  }
-  if (!payload.cvv || !/^\d{3,4}$/.test(payload.cvv)) {
-    errors.push('CVV must contain 3 or 4 digits.');
+  if (typeof payload.memo === 'string' && payload.memo.trim().length > 280) {
+    errors.push('Internal memo must be 280 characters or fewer.');
   }
   return errors;
 };
 
 app.post('/api/pay', (req, res) => {
-  const validationErrors = validatePaymentPayload(req.body || {});
+  const validationErrors = validatePaymentPayload(req.body);
   if (validationErrors.length) {
     return res.status(400).json({
       status: 'error',
-      message: 'Payment validation failed',
+      message: 'Transfer validation failed',
       errors: validationErrors,
     });
   }
 
   const reference = `PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  const flow = typeof req.body.flow === 'string' && req.body.flow.toLowerCase() === 'send' ? 'send' : 'receive';
+  const message = flow === 'send' ? 'Send transfer queued successfully' : 'Receive request generated successfully';
 
   return res.json({
     status: 'success',
-    message: 'Payment processed successfully',
+    message,
     reference,
   });
 });

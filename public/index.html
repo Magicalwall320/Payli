@@ -10,7 +10,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body data-theme="brown">
     <div class="bg-gradient"></div>
     <div class="bg-spotlight"></div>
 
@@ -18,11 +18,17 @@
       <header class="app-header glass">
         <div>
           <p class="subtitle">Hello, Morgan</p>
-          <h1 class="headline">Let’s collect your next client payment</h1>
+          <h1 class="headline">Let’s move money with confidence</h1>
         </div>
-        <button class="icon-button" aria-label="Notifications">
-          <span aria-hidden="true">🔔</span>
-        </button>
+        <div class="header-actions">
+          <button class="icon-button theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+            <span class="theme-icon" aria-hidden="true">🌙</span>
+            <span class="theme-text">Creme theme</span>
+          </button>
+          <button class="icon-button" aria-label="Notifications">
+            <span aria-hidden="true">🔔</span>
+          </button>
+        </div>
       </header>
 
       <main class="screen" aria-live="polite">
@@ -46,11 +52,18 @@
           </section>
 
           <section class="quick-actions glass" aria-label="Quick actions">
-            <button class="action" id="newPayment">
-              <div class="icon">➕</div>
+            <button class="action" id="receiveAction" data-flow="receive">
+              <div class="icon">📥</div>
               <div>
-                <p>Create charge</p>
-                <span>Send a new payment link</span>
+                <p>Receive payment</p>
+                <span>Generate a secure request</span>
+              </div>
+            </button>
+            <button class="action" id="sendAction" data-flow="send">
+              <div class="icon">📤</div>
+              <div>
+                <p>Send funds</p>
+                <span>Disburse to partners fast</span>
               </div>
             </button>
             <button class="action">
@@ -60,13 +73,36 @@
                 <span>View open balances</span>
               </div>
             </button>
-            <button class="action">
-              <div class="icon">👥</div>
+          </section>
+
+          <section class="transfer-panel glass" aria-label="Send and receive overview">
+            <header class="panel-header">
               <div>
-                <p>Clients</p>
-                <span>Manage contacts</span>
+                <h2>Send &amp; receive</h2>
+                <p class="panel-subtitle">Monitor movement across your client accounts.</p>
               </div>
-            </button>
+              <button class="text-button" id="transferHistory">History</button>
+            </header>
+            <div class="transfer-grid">
+              <article class="transfer-card receive">
+                <div class="transfer-top">
+                  <span class="pill">Receive</span>
+                  <span class="trend up">▲ 9%</span>
+                </div>
+                <p class="transfer-amount">$12,430.00</p>
+                <p class="transfer-meta">Average clearance · 1.4 days</p>
+                <button class="secondary-button" type="button" data-flow="receive">Request payment</button>
+              </article>
+              <article class="transfer-card send">
+                <div class="transfer-top">
+                  <span class="pill">Send</span>
+                  <span class="trend down">▼ 3%</span>
+                </div>
+                <p class="transfer-amount">$8,960.00</p>
+                <p class="transfer-meta">Average delivery · 45 minutes</p>
+                <button class="secondary-button" type="button" data-flow="send">Send payout</button>
+              </article>
+            </div>
           </section>
 
           <section class="activity glass" aria-label="Recent activity">
@@ -98,58 +134,6 @@
               </li>
             </ul>
           </section>
-        </section>
-
-        <section
-          class="screen-view"
-          data-screen="cards"
-          id="screen-cards"
-          aria-label="Stored payment cards"
-          hidden
-          aria-hidden="true"
-        >
-          <div class="card-wallet glass">
-            <header>
-              <h2>Virtual wallet</h2>
-              <span class="badge">4 cards</span>
-            </header>
-            <div class="wallet-grid">
-              <article class="wallet-card primary">
-                <div class="wallet-top">
-                  <span>Payli Corporate</span>
-                  <span class="chip">VISA</span>
-                </div>
-                <p class="wallet-number">•••• 4242</p>
-                <div class="wallet-footer">
-                  <span>Exp 05/28</span>
-                  <span>Limit $15,000</span>
-                </div>
-              </article>
-              <article class="wallet-card">
-                <div class="wallet-top">
-                  <span>Projects</span>
-                  <span class="chip">MC</span>
-                </div>
-                <p class="wallet-number">•••• 3010</p>
-                <div class="wallet-footer">
-                  <span>Exp 11/26</span>
-                  <span>Limit $8,500</span>
-                </div>
-              </article>
-              <article class="wallet-card">
-                <div class="wallet-top">
-                  <span>Operations</span>
-                  <span class="chip">AMEX</span>
-                </div>
-                <p class="wallet-number">•••• 9020</p>
-                <div class="wallet-footer">
-                  <span>Exp 02/27</span>
-                  <span>Limit $12,000</span>
-                </div>
-              </article>
-            </div>
-            <button class="text-button">Manage cards</button>
-          </div>
         </section>
 
         <section
@@ -232,10 +216,6 @@
             <span aria-hidden="true">🏠</span>
             <span>Home</span>
           </button>
-          <button type="button" class="nav-link" data-target="cards" aria-controls="screen-cards">
-            <span aria-hidden="true">💳</span>
-            <span>Cards</span>
-          </button>
           <button type="button" class="nav-link" data-target="reports" aria-controls="screen-reports">
             <span aria-hidden="true">📊</span>
             <span>Reports</span>
@@ -259,23 +239,32 @@
       >
         <div class="sheet-header">
           <div>
-            <p class="subtitle">New payment</p>
-            <h2 id="sheetTitle">Charge a client</h2>
+            <p class="subtitle">New transfer</p>
+            <h2 id="sheetTitle">Coordinate a movement</h2>
           </div>
           <button class="icon-button" id="closeSheet" aria-label="Close payment form">✕</button>
         </div>
 
         <form id="paymentForm" class="sheet-form" novalidate>
+          <fieldset class="segmented" role="radiogroup">
+            <legend>Movement type</legend>
+            <div class="segmented-options">
+              <input type="radio" name="flow" id="flowReceive" value="receive" checked />
+              <label for="flowReceive">Receive</label>
+              <input type="radio" name="flow" id="flowSend" value="send" />
+              <label for="flowSend">Send</label>
+            </div>
+          </fieldset>
           <label>
-            <span>Client full name</span>
+            <span>Counterparty full name</span>
             <input type="text" name="fullName" placeholder="Jane Doe" required autocomplete="name" />
           </label>
           <label>
-            <span>Client email</span>
+            <span>Counterparty email</span>
             <input type="email" name="email" placeholder="jane@company.com" required autocomplete="email" />
           </label>
           <label>
-            <span>Payment amount</span>
+            <span>Transfer amount</span>
             <div class="input-with-prefix">
               <span class="prefix">$</span>
               <input
@@ -290,45 +279,10 @@
             </div>
           </label>
           <label>
-            <span>Card number</span>
-            <input
-              type="text"
-              name="cardNumber"
-              inputmode="numeric"
-              pattern="\\d{13,19}"
-              maxlength="19"
-              placeholder="4242 4242 4242 4242"
-              required
-              autocomplete="cc-number"
-            />
+            <span>Internal memo</span>
+            <textarea name="memo" rows="3" placeholder="Share context with your team (optional)"></textarea>
           </label>
-          <div class="row">
-            <label>
-              <span>Expiry (MM/YY)</span>
-              <input
-                type="text"
-                name="expiry"
-                placeholder="05/28"
-                pattern="(0[1-9]|1[0-2])\\/\\d{2}"
-                required
-                autocomplete="cc-exp"
-              />
-            </label>
-            <label>
-              <span>CVV</span>
-              <input
-                type="password"
-                name="cvv"
-                inputmode="numeric"
-                pattern="\\d{3,4}"
-                maxlength="4"
-                placeholder="123"
-                required
-                autocomplete="cc-csc"
-              />
-            </label>
-          </div>
-          <button type="submit" class="primary-button">Process payment</button>
+          <button type="submit" class="primary-button">Submit transfer</button>
         </form>
 
         <div class="feedback" id="paymentFeedback" role="alert" aria-live="polite"></div>
